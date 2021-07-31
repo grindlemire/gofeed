@@ -1,50 +1,94 @@
 package ext
 
+import "encoding/xml"
+
 // ITunesFeedExtension is a set of extension
 // fields for RSS feeds.
 type ITunesFeedExtension struct {
-	Author     string            `json:"author,omitempty"`
-	Block      string            `json:"block,omitempty"`
-	Categories []*ITunesCategory `json:"categories,omitempty"`
-	Explicit   string            `json:"explicit,omitempty"`
-	Keywords   string            `json:"keywords,omitempty"`
-	Owner      *ITunesOwner      `json:"owner,omitempty"`
-	Subtitle   string            `json:"subtitle,omitempty"`
-	Summary    string            `json:"summary,omitempty"`
-	Image      string            `json:"image,omitempty"`
-	Complete   string            `json:"complete,omitempty"`
-	NewFeedURL string            `json:"newFeedUrl,omitempty"`
-	Type       string            `json:"type,omitempty"`
+	XMLName    xml.Name          `xml:"-"`
+	Author     string            `json:"author,omitempty"     xml:"itunes:author,omitempty"`
+	Block      string            `json:"block,omitempty"      xml:"itunes:block,omitempty"`
+	Categories []*ITunesCategory `json:"categories,omitempty" xml:"itunes:category,omitempty"`
+	Explicit   string            `json:"explicit,omitempty"   xml:"itunes:explicit,omitempty"`
+	Keywords   string            `json:"keywords,omitempty"   xml:"itunes:keywords,omitempty"`
+	Owner      *ITunesOwner      `json:"owner,omitempty"      xml:"itunes:owner,omitempty"`
+	Subtitle   string            `json:"subtitle,omitempty"   xml:"itunes:subtitle,omitempty"`
+	Summary    string            `json:"summary,omitempty"    xml:"itunes:summary,omitempty"`
+	Image      string            `json:"image,omitempty"      xml:"itunes:image,omitempty"`
+	Complete   string            `json:"complete,omitempty"   xml:"itunes:complete,omitempty"`
+	NewFeedURL string            `json:"newFeedUrl,omitempty" xml:"itunes:newFeedUrl,omitempty"`
+	Type       string            `json:"type,omitempty"       xml:"itunes:type,omitempty"`
+}
+
+// Encode will encode the itunes extension in the provided xml encoder
+func (itunes ITunesFeedExtension) Encode(e *xml.Encoder) error {
+	encode(e, "itunes:author", itunes.Author)
+	encode(e, "itunes:block", itunes.Block)
+	encode(e, "itunes:category", itunes.Categories)
+	encode(e, "itunes:explicit", itunes.Explicit)
+	encode(e, "itunes:keywords", itunes.Keywords)
+	encode(e, "itunes:owner", itunes.Owner)
+	encode(e, "itunes:subtitle", itunes.Subtitle)
+	encode(e, "itunes:summary", itunes.Summary)
+	encode(e, "itunes:image", itunes.Image)
+	encode(e, "itunes:complete", itunes.Complete)
+	encode(e, "itunes:newFeedUrl", itunes.NewFeedURL)
+	encode(e, "itunes:type", itunes.Type)
+
+	return nil
 }
 
 // ITunesItemExtension is a set of extension
 // fields for RSS items.
 type ITunesItemExtension struct {
-	Author            string `json:"author,omitempty"`
-	Block             string `json:"block,omitempty"`
-	Duration          string `json:"duration,omitempty"`
-	Explicit          string `json:"explicit,omitempty"`
-	Keywords          string `json:"keywords,omitempty"`
-	Subtitle          string `json:"subtitle,omitempty"`
-	Summary           string `json:"summary,omitempty"`
-	Image             string `json:"image,omitempty"`
-	IsClosedCaptioned string `json:"isClosedCaptioned,omitempty"`
-	Episode           string `json:"episode,omitempty"`
-	Season            string `json:"season,omitempty"`
-	Order             string `json:"order,omitempty"`
-	EpisodeType       string `json:"episodeType,omitempty"`
+	Author            string `json:"author,omitempty"            xml:"itunes:author,omitempty"`
+	Block             string `json:"block,omitempty"             xml:"itunes:block,omitempty"`
+	Duration          string `json:"duration,omitempty"          xml:"itunes:duration,omitempty"`
+	Explicit          string `json:"explicit,omitempty"          xml:"itunes:explicit,omitempty"`
+	Keywords          string `json:"keywords,omitempty"          xml:"itunes:keywords,omitempty"`
+	Subtitle          string `json:"subtitle,omitempty"          xml:"itunes:subtitle,omitempty"`
+	Summary           string `json:"summary,omitempty"           xml:"itunes:summary,omitempty"`
+	Image             string `json:"image,omitempty"             xml:"itunes:image,omitempty"`
+	IsClosedCaptioned string `json:"isClosedCaptioned,omitempty" xml:"itunes:isClosedCaptioned,omitempty"`
+	Episode           string `json:"episode,omitempty"           xml:"itunes:episode,omitempty"`
+	Season            string `json:"season,omitempty"            xml:"itunes:season,omitempty"`
+	Order             string `json:"order,omitempty"             xml:"itunes:order,omitempty"`
+	EpisodeType       string `json:"episodeType,omitempty"       xml:"itunes:episodeType,omitempty"`
+}
+
+// Encode will encode the itunes item in the provided xml encoder
+func (itunes ITunesItemExtension) Encode(e *xml.Encoder) error {
+	encode(e, "itunes:author", itunes.Author)
+	encode(e, "itunes:block", itunes.Block)
+	encode(e, "itunes:duration", itunes.Duration)
+	encode(e, "itunes:explicit", itunes.Explicit)
+	encode(e, "itunes:keywords", itunes.Keywords)
+	encode(e, "itunes:subtitle", itunes.Subtitle)
+	encode(e, "itunes:summary", itunes.Summary)
+	encode(e, "itunes:image", itunes.Image)
+	encode(e, "itunes:isClosedCaptioned", itunes.IsClosedCaptioned)
+	encode(e, "itunes:episode", itunes.Episode)
+	encode(e, "itunes:season", itunes.Season)
+	encode(e, "itunes:order", itunes.Order)
+	encode(e, "itunes:episodeType", itunes.EpisodeType)
+
+	return nil
 }
 
 // ITunesCategory is a category element for itunes feeds.
 type ITunesCategory struct {
-	Text        string          `json:"text,omitempty"`
-	Subcategory *ITunesCategory `json:"subcategory,omitempty"`
+	XMLName xml.Name `xml:"itunes:category"`
+
+	Text        string          `json:"text,omitempty"        xml:"text,attr"`
+	Subcategory *ITunesCategory `json:"subcategory,omitempty" xml:"itunes:category,omitempty"`
 }
 
 // ITunesOwner is the owner of a particular itunes feed.
 type ITunesOwner struct {
-	Email string `json:"email,omitempty"`
-	Name  string `json:"name,omitempty"`
+	XMLName xml.Name `xml:"itunes:owner"`
+
+	Email string `json:"email,omitempty" xml:"itunes:email,omitempty"`
+	Name  string `json:"name,omitempty"  xml:"itunes:name,omitempty"`
 }
 
 // NewITunesFeedExtension creates an ITunesFeedExtension given an

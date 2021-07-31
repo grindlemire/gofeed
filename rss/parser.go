@@ -42,6 +42,8 @@ func (rp *Parser) parseRoot(p *xpp.XMLPullParser) (*Feed, error) {
 	items := []*Item{}
 
 	ver := rp.parseVersion(p)
+	rootAttrs := p.Attrs
+	rootName := p.Name
 
 	for {
 		tok, err := rp.base.NextTag(p)
@@ -114,6 +116,8 @@ func (rp *Parser) parseRoot(p *xpp.XMLPullParser) (*Feed, error) {
 	}
 
 	channel.Version = ver
+	channel.RootAttrs = rootAttrs
+	channel.RootName = rootName
 	return channel, nil
 }
 
@@ -568,7 +572,7 @@ func (rp *Parser) parseGUID(p *xpp.XMLPullParser) (guid *GUID, err error) {
 	}
 
 	guid = &GUID{}
-	guid.IsPermalink = p.Attribute("isPermalink")
+	guid.IsPermalink = p.Attribute("isPermaLink")
 
 	result, err := shared.ParseText(p)
 	if err != nil {

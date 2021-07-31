@@ -1,5 +1,7 @@
 package ext
 
+import "encoding/xml"
+
 // DublinCoreExtension represents a feed extension
 // for the Dublin Core specification.
 type DublinCoreExtension struct {
@@ -19,6 +21,28 @@ type DublinCoreExtension struct {
 	Relation    []string `json:"relation,omitempty"`
 	Coverage    []string `json:"coverage,omitempty"`
 	Rights      []string `json:"rights,omitempty"`
+}
+
+// Encode will encode the dublincore extension in the provided xml encoder
+func (dc DublinCoreExtension) Encode(e *xml.Encoder) error {
+	encodeStringArray(e, "dc:title", dc.Title)
+	encodeStringArray(e, "dc:creator", dc.Creator)
+	encodeStringArray(e, "dc:author", dc.Author)
+	encodeStringArray(e, "dc:subject", dc.Subject)
+	encodeStringArray(e, "dc:description", dc.Description)
+	encodeStringArray(e, "dc:publisher", dc.Publisher)
+	encodeStringArray(e, "dc:contributor", dc.Contributor)
+	encodeStringArray(e, "dc:date", dc.Date)
+	encodeStringArray(e, "dc:type", dc.Type)
+	encodeStringArray(e, "dc:format", dc.Format)
+	encodeStringArray(e, "dc:identifier", dc.Identifier)
+	encodeStringArray(e, "dc:source", dc.Source)
+	encodeStringArray(e, "dc:language", dc.Language)
+	encodeStringArray(e, "dc:relation", dc.Relation)
+	encodeStringArray(e, "dc:coverage", dc.Coverage)
+	encodeStringArray(e, "dc:rights", dc.Rights)
+
+	return nil
 }
 
 // NewDublinCoreExtension creates a new DublinCoreExtension
@@ -42,4 +66,15 @@ func NewDublinCoreExtension(extensions map[string][]Extension) *DublinCoreExtens
 	dc.Coverage = parseTextArrayExtension("coverage", extensions)
 	dc.Rights = parseTextArrayExtension("rights", extensions)
 	return dc
+}
+
+func encodeStringArray(e *xml.Encoder, name string, val []string, attrs ...xml.Attr) error {
+	if val == nil {
+		return nil
+	}
+
+	for _, v := range val {
+		encode(e, name, v)
+	}
+	return nil
 }
