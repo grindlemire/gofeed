@@ -5,5 +5,6 @@ Description: rss channel categories
   <channel>
     <category domain="http://www.example.org/cat/1">Feed Category 1</category>
     <category domain="http://www.example.org/cat/2">Feed Category 2</category>
+    <category>Feed Category 3</category>
   </channel>
 </rss>

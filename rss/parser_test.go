@@ -21,32 +21,6 @@ func TestParser_Parse(t *testing.T) {
 	}
 }
 
-func TestIsolateProblem(t *testing.T) {
-
-	name := "../testdata/parser/rss/rss_channel_item_custom.xml"
-
-	testFile(t, name)
-}
-
-// TODO: Examples
-func TestGenerateXML(t *testing.T) {
-	name := "./realistic_test.xml"
-
-	raw, err := ioutil.ReadFile(name)
-	assert.Nil(t, err)
-
-	fmt.Printf("input:\n%s\n\n\n\n\n", raw)
-
-	fp := &rss.Parser{}
-	feed, err := fp.Parse(bytes.NewReader(raw))
-	assert.Nil(t, err)
-
-	output, err := feed.Marshal()
-	assert.Nil(t, err)
-
-	fmt.Printf("output:\n\n\n\n\n%s\n", output)
-}
-
 func testFile(t *testing.T, filename string) {
 	base := filepath.Base(filename)
 	name := strings.TrimSuffix(base, filepath.Ext(base))

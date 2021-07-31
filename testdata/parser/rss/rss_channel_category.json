@@ -7,6 +7,10 @@
         {
             "domain": "http://www.example.org/cat/2",
             "value": "Feed Category 2"
+        },
+        {
+            "domain": "",
+            "value": "Feed Category 3"
         }
     ],
     "items": [],
