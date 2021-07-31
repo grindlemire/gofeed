@@ -43,7 +43,7 @@ type Feed struct {
 
 // Marshal the serialized xml for the parsed rss feed
 func (f Feed) Marshal() ([]byte, error) {
-	output, err := xml.MarshalIndent(f, "", "  ")
+	output, err := xml.Marshal(f)
 	if err != nil {
 		return []byte{}, err
 	}
