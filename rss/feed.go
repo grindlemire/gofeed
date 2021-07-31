@@ -50,6 +50,15 @@ func (f Feed) Marshal() ([]byte, error) {
 	return []byte(xml.Header + string(output)), nil
 }
 
+// MarshalIndent the serialized xml for the parsed rss feed
+func (f Feed) MarshalIndent(prefix, indent string) ([]byte, error) {
+	output, err := xml.MarshalIndent(f, prefix, indent)
+	if err != nil {
+		return []byte{}, err
+	}
+	return []byte(xml.Header + string(output)), nil
+}
+
 // MarshalXML is a custom xml marshaller function as the xml created from a feed has a unique
 // format we must capture
 func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
