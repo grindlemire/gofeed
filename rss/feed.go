@@ -198,7 +198,7 @@ type Source struct {
 type Category struct {
 	XMLName xml.Name `xml:"category"`
 
-	Domain string `json:"domain,omitempty" xml:"domain,attr"`
+	Domain string `json:"domain,omitempty" xml:"domain,attr,omitempty"`
 	Value  string `json:"value,omitempty"  xml:",chardata"`
 }
 
