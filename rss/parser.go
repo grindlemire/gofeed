@@ -1,6 +1,7 @@
 package rss
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io"
 	"strings"
@@ -116,7 +117,19 @@ func (rp *Parser) parseRoot(p *xpp.XMLPullParser) (*Feed, error) {
 	}
 
 	channel.Version = ver
-	channel.RootAttrs = rootAttrs
+
+	// this is a dumb hack to prevent golang from mangling namespaces that start with xml
+	for _, attr := range rootAttrs {
+		if attr.Name.Space != "" {
+			channel.RootAttrs = append(channel.RootAttrs,
+				xml.Attr{
+					Name: xml.Name{
+						Local: fmt.Sprintf("%s:%s", attr.Name.Space, attr.Name.Local),
+					},
+					Value: attr.Value,
+				})
+		}
+	}
 	channel.RootName = rootName
 	return channel, nil
 }
