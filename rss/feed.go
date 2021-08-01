@@ -64,7 +64,7 @@ func (f Feed) MarshalIndent(prefix, indent string) ([]byte, error) {
 func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	e.EncodeToken(xml.StartElement{
 		Name: xml.Name{Local: f.RootName},
-		Attr: f.RootAttrs,
+		Attr: append(f.RootAttrs, xml.Attr{Name: xml.Name{Local: "version"}, Value: f.Version}),
 	})
 	e.EncodeToken(xml.StartElement{
 		Name: xml.Name{Local: "channel"},
