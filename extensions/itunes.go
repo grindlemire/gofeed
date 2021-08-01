@@ -73,7 +73,15 @@ func (itunes ITunesItemExtension) Encode(e *xml.Encoder) error {
 	encode(e, "itunes:keywords", itunes.Keywords)
 	encode(e, "itunes:subtitle", itunes.Subtitle)
 	encode(e, "itunes:summary", itunes.Summary)
-	encode(e, "itunes:image", itunes.Image)
+
+	e.EncodeToken(xml.StartElement{
+		Name: xml.Name{Local: "itunes:image"},
+		Attr: []xml.Attr{
+			{Name: xml.Name{Local: "href"}, Value: itunes.Image},
+		},
+	})
+	e.EncodeToken(xml.EndElement{Name: xml.Name{Local: "itunes:image"}})
+
 	encode(e, "itunes:isClosedCaptioned", itunes.IsClosedCaptioned)
 	encode(e, "itunes:episode", itunes.Episode)
 	encode(e, "itunes:season", itunes.Season)
