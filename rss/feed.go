@@ -92,6 +92,7 @@ func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 
 	if f.ITunesExt != nil {
 		f.ITunesExt.Encode(e)
+		encode(e, "itunes:title", f.Title)
 	}
 
 	if f.DublinCoreExt != nil {

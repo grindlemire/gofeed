@@ -30,7 +30,7 @@ func (itunes ITunesFeedExtension) Encode(e *xml.Encoder) error {
 	encode(e, "itunes:owner", itunes.Owner)
 	encode(e, "itunes:subtitle", itunes.Subtitle)
 	encode(e, "itunes:summary", itunes.Summary)
-	encode(e, "itunes:image", itunes.Image)
+	encode(e, "itunes:image", "", xml.Attr{Name: xml.Name{Local: "href"}, Value: itunes.Image})
 	encode(e, "itunes:complete", itunes.Complete)
 	encode(e, "itunes:newFeedUrl", itunes.NewFeedURL)
 	encode(e, "itunes:type", itunes.Type)
