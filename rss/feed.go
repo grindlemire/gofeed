@@ -155,6 +155,7 @@ func (i Item) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 
 	if i.ITunesExt != nil {
 		i.ITunesExt.Encode(e)
+		encode(e, "itunes:title", i.Title)
 	}
 
 	if i.DublinCoreExt != nil {
