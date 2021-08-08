@@ -3,6 +3,7 @@ package rss
 import (
 	"encoding/json"
 	"encoding/xml"
+	"strings"
 	"time"
 
 	ext "github.com/mmcdole/gofeed/extensions"
@@ -74,7 +75,9 @@ func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	encode(e, "link", f.Link)
 	encode(e, "description", f.Description)
 	encode(e, "language", f.Language)
-	encode(e, "copyright", f.Copyright)
+	// This is due to apple podcast requirements for the copyright symbol.
+	// See https://podcasters.apple.com/support/823-podcast-requirements
+	encodeCopyright(e, f.Copyright)
 	encode(e, "managingEditor", f.ManagingEditor)
 	encode(e, "webMaster", f.WebMaster)
 	encode(e, "pubDate", f.PubDate)
@@ -104,6 +107,13 @@ func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	e.EncodeToken(xml.EndElement{Name: xml.Name{Local: "channel"}})
 	e.EncodeToken(xml.EndElement{Name: xml.Name{Local: f.RootName}})
 	return nil
+}
+
+func encodeCopyright(e *xml.Encoder, s string) {
+	s1 := strings.ReplaceAll(s, "©", "&#xA9;")
+	s2 := strings.ReplaceAll(s1, "℗", "&#x2117;")
+	s3 := strings.ReplaceAll(s2, "™", "&#x2122;")
+	encode(e, "copyright", s3)
 }
 
 func (f Feed) String() string {
