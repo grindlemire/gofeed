@@ -3,10 +3,12 @@ package rss
 import (
 	"encoding/json"
 	"encoding/xml"
+	"html"
 	"strings"
 	"time"
 
 	ext "github.com/mmcdole/gofeed/extensions"
+	"github.com/mmcdole/gofeed/internal/shared"
 )
 
 // Feed is an RSS Feed
@@ -48,7 +50,13 @@ func (f Feed) Marshal() ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	return []byte(xml.Header + string(output)), nil
+
+	s := string(output)
+	for k, v := range applePodcastSpecialEncodings {
+		s = strings.ReplaceAll(s, k, v)
+	}
+
+	return []byte(xml.Header + s), nil
 }
 
 // MarshalIndent the serialized xml for the parsed rss feed
@@ -57,7 +65,13 @@ func (f Feed) MarshalIndent(prefix, indent string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	return []byte(xml.Header + string(output)), nil
+
+	s := string(output)
+	for k, v := range applePodcastSpecialEncodings {
+		s = strings.ReplaceAll(s, k, v)
+	}
+
+	return []byte(xml.Header + s), nil
 }
 
 // MarshalXML is a custom xml marshaller function as the xml created from a feed has a unique
@@ -75,8 +89,6 @@ func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	encode(e, "link", f.Link)
 	encode(e, "description", f.Description)
 	encode(e, "language", f.Language)
-	// This is due to apple podcast requirements for the copyright symbol.
-	// See https://podcasters.apple.com/support/823-podcast-requirements
 	encodeCopyright(e, f.Copyright)
 	encode(e, "managingEditor", f.ManagingEditor)
 	encode(e, "webMaster", f.WebMaster)
@@ -103,17 +115,44 @@ func (f Feed) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	}
 
 	encode(e, "items", f.Items)
-
 	e.EncodeToken(xml.EndElement{Name: xml.Name{Local: "channel"}})
 	e.EncodeToken(xml.EndElement{Name: xml.Name{Local: f.RootName}})
 	return nil
 }
 
+var applePodcastSpecialEncodings = map[string]string{
+	"©": "&#xA9;",
+	"℗": "&#x2117;",
+	"™": "&#x2122;",
+}
+
+// This is a terrible hack to get around the fact that go doesn't properly handle special characters regarding
+// copyright. See https://podcasters.apple.com/support/823-podcast-requirements.
+// This all stems from the issue that html escaping the escaped special characters makes the & become &amp;
+// which is encoding the special character twice
 func encodeCopyright(e *xml.Encoder, s string) {
-	s1 := strings.ReplaceAll(s, "©", "&#xA9;")
-	s2 := strings.ReplaceAll(s1, "℗", "&#x2117;")
-	s3 := strings.ReplaceAll(s2, "™", "&#x2122;")
-	encode(e, "copyright", []byte(s3))
+	// If it is in a cdata tag don't mess with it and pass it on
+	if strings.Contains(s, shared.CDATA_START) && strings.Contains(s, shared.CDATA_END) {
+		encode(e, "copyright", s)
+		return
+	}
+
+	// first html escape the string so we don't pick up an extram ampersand after our manual encoding
+	s = html.EscapeString(s)
+
+	// then go through and replace all the copyright related special characters with their equivalent
+	for k, v := range applePodcastSpecialEncodings {
+		s = strings.ReplaceAll(s, k, v)
+	}
+
+	c := struct {
+		XMLName xml.Name `xml:"copyright"`
+		Val     string   `xml:",innerxml"`
+	}{
+		Val: s,
+	}
+
+	encode(e, "copyright", c)
 }
 
 func (f Feed) String() string {

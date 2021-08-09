@@ -112,7 +112,7 @@ func DecodeEntities(str string) (string, error) {
 			return buf.String(), nil
 		}
 
-		// Check if there is a space somewhere within the 'entitiy'.
+		// Check if there is a space somewhere within the 'entity'.
 		// If there is then skip the whole thing since it's not a real entity.
 		if strings.Contains(string(data[1:end]), " ") {
 			buf.Write(data)

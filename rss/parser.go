@@ -128,6 +128,8 @@ func (rp *Parser) parseRoot(p *xpp.XMLPullParser) (*Feed, error) {
 					},
 					Value: attr.Value,
 				})
+		} else {
+			channel.RootAttrs = append(channel.RootAttrs, attr)
 		}
 	}
 	channel.RootName = rootName

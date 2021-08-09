@@ -10,22 +10,26 @@ import (
 	"testing"
 
 	"github.com/mmcdole/gofeed/rss"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestParser_Parse(t *testing.T) {
-	files, _ := filepath.Glob("../testdata/parser/rss/*.xml")
+	files, _ := filepath.Glob("../testdata/parser/rss/rss_channel_copyright*.xml")
 	for _, f := range files {
 		testFile(t, f)
 	}
+}
+
+func TestIsolate(t *testing.T) {
+	f := fmt.Sprintf("../testdata/parser/rss/%s.xml", "rss_channel_copyright_escaped_markup")
+	testFile(t, f)
 }
 
 func testFile(t *testing.T, filename string) {
 	base := filepath.Base(filename)
 	name := strings.TrimSuffix(base, filepath.Ext(base))
 
-	fmt.Printf("Testing %s... ", name)
+	fmt.Printf("Testing %s...\n ", name)
 
 	// Get actual source feed
 	ff := fmt.Sprintf("../testdata/parser/rss/%s.xml", name)
@@ -34,8 +38,8 @@ func testFile(t *testing.T, filename string) {
 	// Parse actual feed
 	fp := &rss.Parser{}
 	actual, _ := fp.Parse(bytes.NewReader(f))
-	newInput, err := actual.Marshal()
-	assert.Nil(t, err)
+	newInput, err := actual.MarshalIndent("", "  ")
+	require.Nil(t, err)
 
 	actual.RootName = ""
 	actual.RootAttrs = nil
@@ -48,11 +52,7 @@ func testFile(t *testing.T, filename string) {
 	expected := &rss.Feed{}
 	json.Unmarshal(e, &expected)
 
-	if assert.Equal(t, expected, actual, "Feed file %s.xml did not match expected output %s.json", name, name) {
-		fmt.Printf("OK...")
-	} else {
-		fmt.Printf("Failed\n")
-	}
+	require.Equal(t, expected, actual, "Feed file %s.xml did not match expected output %s.json", name, name)
 
 	fp = &rss.Parser{}
 	newActual, err := fp.Parse(bytes.NewReader(newInput))
@@ -60,9 +60,5 @@ func testFile(t *testing.T, filename string) {
 	newActual.RootAttrs = nil
 	newActual.RootName = ""
 
-	if assert.Equal(t, expected, newActual, "Remarshalled Feed file %s.xml did not match expected output %s.json", name, name) {
-		fmt.Printf("Remarshalling OK\n")
-	} else {
-		fmt.Printf("Failed Remarshalling\n")
-	}
+	require.Equal(t, expected, newActual, "Remarshalled Feed file %s.xml did not match expected output %s.json", name, name)
 }
