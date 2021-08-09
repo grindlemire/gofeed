@@ -113,7 +113,7 @@ func encodeCopyright(e *xml.Encoder, s string) {
 	s1 := strings.ReplaceAll(s, "©", "&#xA9;")
 	s2 := strings.ReplaceAll(s1, "℗", "&#x2117;")
 	s3 := strings.ReplaceAll(s2, "™", "&#x2122;")
-	encode(e, "copyright", s3)
+	encode(e, "copyright", []byte(s3))
 }
 
 func (f Feed) String() string {
