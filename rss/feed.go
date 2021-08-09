@@ -51,12 +51,7 @@ func (f Feed) Marshal() ([]byte, error) {
 		return []byte{}, err
 	}
 
-	s := string(output)
-	for k, v := range applePodcastSpecialEncodings {
-		s = strings.ReplaceAll(s, k, v)
-	}
-
-	return []byte(xml.Header + s), nil
+	return []byte(xml.Header + string(output)), nil
 }
 
 // MarshalIndent the serialized xml for the parsed rss feed
@@ -66,12 +61,7 @@ func (f Feed) MarshalIndent(prefix, indent string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	s := string(output)
-	for k, v := range applePodcastSpecialEncodings {
-		s = strings.ReplaceAll(s, k, v)
-	}
-
-	return []byte(xml.Header + s), nil
+	return []byte(xml.Header + string(output)), nil
 }
 
 // MarshalXML is a custom xml marshaller function as the xml created from a feed has a unique
